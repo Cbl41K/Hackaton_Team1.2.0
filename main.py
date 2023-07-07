@@ -47,27 +47,30 @@ merged_data['HBD'] = hbd
 merged_data['TPSA'] = tpsa
 
 
-
-"""Анализ данных, построение графиков"""
-
-# numeric_data = merged_data.select_dtypes(include='number')
-# correlation_matrix = numeric_data.corr()
-# sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
-# plt.show()
-
 """Очистка базы"""
 
-columns = ['Unnamed: 0.1', 'Unnamed: 0_x',
-           'NP size_min', 'NP size_max',
-           'min_Incub_period, h', 'avg_Incub_period, h', 'max_Incub_period, h',
-           'growth_temp, C', 'prefered_name']
-merged_data = merged_data.drop(columns, axis=1)
 merged_data['gram'] = merged_data['gram'].replace({'n': 0, 'p': 1})
 ZOI = ['ZOI_drug', 'ZOI_NP', 'ZOI_drug_NP']
 for zoi in ZOI:
     merged_data[zoi] = merged_data[zoi].str.replace(r'\+.*', '', regex=True)
 merged_data = merged_data[merged_data['kingdom'] != 'Fungi']
 merged_data = merged_data[~merged_data['NP_concentration'].str.contains('/', na=False)]
+columns = ['Unnamed: 0.1', 'Unnamed: 0_x',
+           'NP size_min', 'NP size_max',
+           'min_Incub_period, h', 'avg_Incub_period, h', 'max_Incub_period, h',
+           'growth_temp, C', 'prefered_name', 'kingdom',
+           'subkingdom', 'clade', 'phylum', 'class',
+           'order', 'family', 'genus', 'species']
+merged_data = merged_data.drop(columns, axis=1)
+
+
+"""Анализ данных, построение графиков"""
+
+numeric_data = merged_data.select_dtypes(include='number')
+correlation_matrix = numeric_data.corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
+plt.show()
+
 
 merged_data.to_csv('merged_data.csv', index=False)
 print(merged_data.info())
