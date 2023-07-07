@@ -12,6 +12,7 @@ def merge_and_load_datasets(name_1, name_2, name_3):
 
     Args:
         name_1, name_2, name_3 (str): Имена CSV-файлов (датасетов).
+
     Returns:
         pandas.DataFrame: Объединенный датасет.
     """
