@@ -2,6 +2,9 @@ import numpy as np
 import pandas as pd
 from rdkit import Chem
 from rdkit.Chem import Descriptors
+import seaborn as sns
+import matplotlib.pyplot as plt
+from itertools import combinations
 
 data = pd.read_csv('data.csv')
 bacterial_descriptors = pd.read_csv('bacterial_descriptors.csv')
@@ -52,3 +55,16 @@ merged_data.to_csv('update_rdkit_merged_data.csv', index=False)
 print('-----------------------------')
 print(merged_data.info())
 print(merged_data.isnull().mean()*100)
+
+
+columns = merged_data.columns
+column_combinations = list(combinations(columns, 2))
+
+for combination in column_combinations:
+    try:
+        sns.heatmap(merged_data[list(combination)])
+        plt.xlabel(combination[0])
+        plt.ylabel(combination[1])
+        plt.show()
+    except:
+        pass
