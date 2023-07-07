@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from itertools import combinations
 
 """Объединение датасетов и загрузка из других баз"""
+
 data = pd.read_csv('data.csv')
 bacterial_descriptors = pd.read_csv('bacterial_descriptors.csv')
 drug_descriptors = pd.read_csv('drug_descriptors.csv')
@@ -65,7 +66,8 @@ merged_data['gram'] = merged_data['gram'].replace({'n': 0, 'p': 1})
 ZOI = ['ZOI_drug', 'ZOI_NP', 'ZOI_drug_NP']
 for zoi in ZOI:
     merged_data[zoi] = merged_data[zoi].str.replace(r'\+.*', '', regex=True)
-
+merged_data = merged_data[merged_data['kingdom'] != 'Fungi']
+merged_data = merged_data[~merged_data['NP_concentration'].str.contains('/', na=False)]
 
 merged_data.to_csv('merged_data.csv', index=False)
 print(merged_data.info())
