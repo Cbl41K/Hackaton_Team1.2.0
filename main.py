@@ -55,7 +55,7 @@ for zoi in ZOI:
     merged_data[zoi] = merged_data[zoi].str.replace(r'\+.*', '', regex=True)
 merged_data = merged_data[merged_data['kingdom'] != 'Fungi']
 merged_data = merged_data[~merged_data['NP_concentration'].str.contains('/', na=False)]
-columns = ['Unnamed: 0.1', 'Unnamed: 0_x',
+columns = ['Unnamed: 0.1', 'Unnamed: 0_x', 'Unnamed: 0_y',
            'NP size_min', 'NP size_max',
            'min_Incub_period, h', 'avg_Incub_period, h', 'max_Incub_period, h',
            'growth_temp, C', 'prefered_name', 'kingdom',
