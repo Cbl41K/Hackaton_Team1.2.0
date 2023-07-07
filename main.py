@@ -4,7 +4,7 @@ from rdkit import Chem
 from rdkit.Chem import Descriptors
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+import graphs
 
 def merge_and_load_datasets(name_1, name_2, name_3):
     """
@@ -95,9 +95,8 @@ def analyze_data(data):
     numeric_data = data.select_dtypes(include='number')
 
     # Построение тепловой карты корреляции
-    correlation_matrix = numeric_data.corr()
-    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
-    plt.show()
+    graphs.matrix_correlation(numeric_data)
+    graphs.histogram(data, 'NP size_avg')
 
 
 def save_data(data, name = 'data_new.csv'):
