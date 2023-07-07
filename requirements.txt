@@ -1,2 +1,4 @@
 pandas
 rdkit
+chembl_webresource_client
+Bio

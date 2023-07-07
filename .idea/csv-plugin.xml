@@ -31,6 +31,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/update_merged_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
