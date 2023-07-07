@@ -11,7 +11,7 @@ def merge_and_load_datasets(name_1, name_2, name_3):
     Объединяет датасеты и загружает данные из других баз.
 
     Args:
-        name_1, name_2, name_3 (str): Имена файлов-датасетов.
+        name_1, name_2, name_3 (str): Имена CSV-файлов (датасетов).
     Returns:
         pandas.DataFrame: Объединенный датасет.
     """
@@ -106,7 +106,6 @@ def save_data(data, name = 'data_new.csv'):
     Args:
         data (pandas.DataFrame): Обработанный датасет.
         name (str): Имя CSV-файла для сохранения.
-
     """
     # Сохранение обработанных данных в CSV-файле
     data.to_csv(name, index=False)
