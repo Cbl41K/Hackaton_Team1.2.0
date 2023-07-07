@@ -57,14 +57,7 @@ print(merged_data.info())
 print(merged_data.isnull().mean()*100)
 
 
-columns = merged_data.columns
-column_combinations = list(combinations(columns, 2))
-
-for combination in column_combinations:
-    try:
-        sns.heatmap(merged_data[list(combination)])
-        plt.xlabel(combination[0])
-        plt.ylabel(combination[1])
-        plt.show()
-    except:
-        pass
+numeric_data = merged_data.select_dtypes(include='number')
+correlation_matrix = numeric_data.corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
+plt.show()
