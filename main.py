@@ -3,6 +3,8 @@ import pandas as pd
 from rdkit import Chem
 from rdkit.Chem import Descriptors
 import graphs
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def merge_and_load_datasets(name_1, name_2, name_3):
     """
@@ -88,6 +90,25 @@ def process_data(data):
     # Удаление указанных столбцов
     data = data.drop(columns, axis=1)
 
+    mask = (data['fold_increase_in_antibacterial_activity (%)'] < 0) | (data['fold_increase_in_antibacterial_activity (%)'] > 10)
+    data.loc[mask, 'fold_increase_in_antibacterial_activity (%)'] = np.nan
+
+    mask = (data['MolWt'] > 700)
+    data.loc[mask, 'MolWt'] = np.nan
+
+    mask = (data['NP size_avg'] > 50)
+    data.loc[mask, 'NP size_avg'] = np.nan
+
+    mask = (data['MolLogP'] < -10)
+    data.loc[mask, 'MolLogP'] = np.nan
+
+    mask = (data['biosafety_level'] < 1.5)
+    data.loc[mask, 'biosafety_level'] = np.nan
+
+    mask = (data['MDR_check'] > 0.9)
+    data.loc[mask, 'MDR_check'] = np.nan
+
+
     return data
 
 
@@ -122,7 +143,7 @@ def load_and_process_drugbank(name, data):
                'cal_polar_surface_area', 'cal_water_solubility', 'cal_refractivity',
                'cal_polarizability', 'cal_rotatable_bond_count', 'cal_h_bond_acceptor_count',
                'cal_h_bond_donor_count', 'cal_bioavailability', 'exp_molecular_weight',
-               'cal_physiological_charge', 'exp_pka', 'half_life', 'drugbank_id']
+               'cal_physiological_charge', 'exp_pka', 'half_life', 'drugbank_id', 'exp_logp']
     drugbank = drugbank.drop(columns, axis=1)
 
     # Объединение датасетов
@@ -143,8 +164,8 @@ def analyze_data(data):
     numeric_data = pd.concat([data.select_dtypes(include='number'), data[['ZOI_drug', 'ZOI_NP', 'ZOI_drug_NP']]], axis=1)
 
     # Построение тепловой карты корреляции
-    graphs.matrix_correlation(numeric_data)
-
+    # graphs.matrix_correlation(numeric_data)
+    graphs.boxplot(numeric_data)
 
 
 def save_data(data, name = 'data_new.csv'):
@@ -167,7 +188,7 @@ def save_data(data, name = 'data_new.csv'):
 def data_for_model(data):
     # Удаление ненужных столбцов
     columns = ['Drug_dose', 'NP_concentration', 'NumHAcceptors', 'NumHDonors',
-               'TPSA', 'cal_pka_basic', 'cal_number_of_rings', 'exp_logp']
+               'TPSA', 'cal_pka_basic', 'cal_number_of_rings']
     data = data.drop(columns, axis=1)
     return data
 

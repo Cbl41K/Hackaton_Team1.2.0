@@ -41,3 +41,8 @@ def histogram(data, column, bins=None):
     plt.hist(data[column], bins=bins)
     plt.title(column)
     plt.show()
+
+
+def boxplot(data):
+    sns.boxplot(data=data, orient="h")
+    plt.show()
