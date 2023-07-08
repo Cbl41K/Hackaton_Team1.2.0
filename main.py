@@ -2,13 +2,23 @@ import numpy as np
 import pandas as pd
 from rdkit import Chem
 from rdkit.Chem import Descriptors
+from sklearn.pipeline import make_pipeline
 import graphs
 import matplotlib.pyplot as plt
 import seaborn as sns
-import sklearn
-from sklearn.ensemble import RandomForestRegressor
 from sklearn import preprocessing
-from sklearn import metrics
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.svm import SVR
+from sklearn.neural_network import MLPRegressor
+from sklearn.impute import SimpleImputer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+
+
+
+
 
 def merge_and_load_datasets(name_1, name_2, name_3):
     """
@@ -205,6 +215,36 @@ def data_for_model(data):
 
     return data
 
+
+def training_model(data):
+    # Разделение на признаки (X) и целевую переменную (y)
+    X = data.drop('ZOI_drug_NP', axis=1)
+    y = data['ZOI_drug_NP']
+
+    # Разделение на обучающую и тестовую выборки
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Создание пайплайна с заполнением пропущенных значений и линейной регрессией
+    pipeline = make_pipeline(
+        SimpleImputer(strategy='median'),
+        GradientBoostingRegressor()
+    )
+
+    # Обучение пайплайна на обучающих данных
+    pipeline.fit(X_train, y_train)
+
+    # Предсказание значений на тестовом наборе данных
+    y_pred = pipeline.predict(X_test)
+
+    # Вычисление корня из среднеквадратичной ошибки (RMSE)
+    rmse = mean_squared_error(y_test, y_pred, squared=False)
+    print("Root Mean Squared Error (RMSE):", rmse)
+
+    # Вычисление коэффициента детерминации R^2
+    r2 = r2_score(y_test, y_pred)
+    print("R-squared (R^2) score:", r2)
+
+
 def main():
     # Объединение датасетов и загрузка данных
     data = merge_and_load_datasets('data.csv', 'bacterial_descriptors.csv', 'drug_descriptors.csv')
@@ -230,12 +270,15 @@ def main():
     save_data(data, 'merged_data.csv')
 
     # Анализ данных и построение графиков
-    analyze_data(data)
+    #analyze_data(data)
 
     # Очистка базы для модели
     data = data_for_model(data)
 
+    # Разделение датасета для обучения модели по значению таргета
+    data, data_ZOI_drug_NP_Nan = data[data['ZOI_drug_NP'].notna()], data[data['ZOI_drug_NP'].isna()]
 
+    training_model(data)
 
 if __name__ == '__main__':
     main()
