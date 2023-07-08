@@ -167,7 +167,7 @@ def save_data(data, name = 'data_new.csv'):
 def data_for_model(data):
     # Удаление ненужных столбцов
     columns = ['Drug_dose', 'NP_concentration', 'NumHAcceptors', 'NumHDonors',
-               'TPSA', 'cal_pka_basic', 'cal_number_of_rings']
+               'TPSA', 'cal_pka_basic', 'cal_number_of_rings', 'exp_logp']
     data = data.drop(columns, axis=1)
     return data
 
