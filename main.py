@@ -142,4 +142,8 @@ def main():
     save_data(data, 'merged_data.csv')
 
 if __name__ == '__main__':
-    main()
+    data = pd.read_csv('drugbank.csv')
+    merged_data = pd.read_csv('merged_data.csv')
+    drugsfilt = all_drugs.name.isin(merged_data.drug.unique())
+    drugs = all_drugs[drugsfilt]
+    print(data.info())

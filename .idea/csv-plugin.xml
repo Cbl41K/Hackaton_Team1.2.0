@@ -24,6 +24,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/drugbank.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/merged_data.csv">
           <value>
             <Attribute>
