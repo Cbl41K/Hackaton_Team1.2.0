@@ -1,6 +1,11 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+def matrix_graphs(data):
+    sns.pairplot(data, size=5)
+    plt.show()
+
+
 def matrix_of_dependency_graphs(data, cols_to_analyse):
     """
     Строит матрицу графиков зависимости между выбранными столбцами.
@@ -11,6 +16,7 @@ def matrix_of_dependency_graphs(data, cols_to_analyse):
     """
     sns.pairplot(data[cols_to_analyse], size=3)
     plt.show()
+
 
 def matrix_correlation(cols_to_analyse):
     """

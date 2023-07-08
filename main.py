@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd
 from rdkit import Chem
 from rdkit.Chem import Descriptors
-import seaborn as sns
-import matplotlib.pyplot as plt
 import graphs
 
 def merge_and_load_datasets(name_1, name_2, name_3):
@@ -77,6 +75,9 @@ def process_data(data):
     # Исключение строк, где значение в столбце 'NP_concentration' содержит символ '/'
     data = data[~data['NP_concentration'].str.contains('/', na=False)]
 
+    # Привоение Nan для Drug_dose, если drug равно Nan
+    data.loc[data['drug'].isna(), 'Drug_dose'] = np.nan
+
     columns = ['Unnamed: 0.1', 'Unnamed: 0_x', 'Unnamed: 0_y',
                'NP size_min', 'NP size_max',
                'min_Incub_period, h', 'avg_Incub_period, h', 'max_Incub_period, h',
@@ -139,11 +140,11 @@ def analyze_data(data):
         data (pandas.DataFrame): Обработанный датасет.
     """
     # Выбор числовых столбцов
-    numeric_data = data.select_dtypes(include='number')
+    numeric_data = pd.concat([data.select_dtypes(include='number'), data[['ZOI_drug', 'ZOI_NP', 'ZOI_drug_NP']]], axis=1)
 
     # Построение тепловой карты корреляции
     graphs.matrix_correlation(numeric_data)
-    #graphs.histogram(data, 'NP size_avg')
+
 
 
 def save_data(data, name = 'data_new.csv'):
