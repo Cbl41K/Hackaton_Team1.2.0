@@ -31,7 +31,21 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/merg_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/merged_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/test.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

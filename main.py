@@ -60,6 +60,12 @@ def process_data(data):
     # Преобразование значений в столбце 'gram' на числовые (0 и 1)
     data['gram'] = data['gram'].replace({'n': 0, 'p': 1})
 
+    # Приведение в стандартный вид
+    data['drug'] = data['drug'].str.capitalize().str.rstrip()
+
+    data = data.drop(data[data['drug'] == 'Co-trimoxazole'].index)
+    data = data.drop(data[data['drug'] == 'Neomycin'].index)
+
     ZOI = ['ZOI_drug', 'ZOI_NP', 'ZOI_drug_NP']
     for zoi in ZOI:
         # Удаление символа "+" и всего, что следует за ним, в столбцах 'ZOI_drug', 'ZOI_NP' и 'ZOI_drug_NP'
@@ -84,6 +90,47 @@ def process_data(data):
     return data
 
 
+def load_and_process_drugbank(name, data):
+    """
+    Загружает данные из одного датасета и объединяет со вторым.
+
+    Args:
+        name (str): Имя CSV-файла (датасета).
+        data (pandas.DataFrame): Другой датасет, содержащий столбец "drug".
+
+    Returns:
+        pandas.DataFrame: Объединенный и обработанный датасет.
+    """
+
+    drugbank = pd.read_csv(name)
+
+    # Замена значений в столбце "name"
+    exceptions = {
+        'Phenoxymethylpenicillin': 'Penicillin',
+        'Polymyxin B': 'Polymyxin',
+        'Amphotericin B': 'Amphotericin b'
+    }
+    drugbank['name'] = drugbank['name'].replace(exceptions)
+
+    # Фильтрация по существующим значениям в столбце "drug"
+    drugsfilt = drugbank.name.isin(data.drug.unique())
+    drugbank = drugbank[drugsfilt]
+
+    # Удаление ненужных столбцов
+    columns = ['Unnamed: 0', 'type', 'state', 'cal_logp', 'cal_molecular_weight',
+               'cal_polar_surface_area', 'cal_water_solubility', 'cal_refractivity',
+               'cal_polarizability', 'cal_rotatable_bond_count', 'cal_h_bond_acceptor_count',
+               'cal_h_bond_donor_count', 'cal_bioavailability', 'exp_molecular_weight',
+               'cal_physiological_charge', 'exp_pka', 'half_life', 'drugbank_id']
+    drugbank = drugbank.drop(columns, axis=1)
+
+    # Объединение датасетов
+    data = pd.merge(data, drugbank, left_on='drug', right_on='name', how='left')
+    data = data.drop('name', axis=1)
+
+    return data
+
+
 def analyze_data(data):
     """
     Анализирует данные и строит графики.
@@ -96,7 +143,7 @@ def analyze_data(data):
 
     # Построение тепловой карты корреляции
     graphs.matrix_correlation(numeric_data)
-    graphs.histogram(data, 'NP size_avg')
+    #graphs.histogram(data, 'NP size_avg')
 
 
 def save_data(data, name = 'data_new.csv'):
@@ -135,6 +182,9 @@ def main():
     # Обработка и очистка данных
     data = process_data(data)
 
+    # Загрузка новых данных
+    data = load_and_process_drugbank('drugbank.csv', data)
+
     # Анализ данных и построение графиков
     analyze_data(data)
 
@@ -142,8 +192,4 @@ def main():
     save_data(data, 'merged_data.csv')
 
 if __name__ == '__main__':
-    data = pd.read_csv('drugbank.csv')
-    merged_data = pd.read_csv('merged_data.csv')
-    drugsfilt = all_drugs.name.isin(merged_data.drug.unique())
-    drugs = all_drugs[drugsfilt]
-    print(data.info())
+    main()
