@@ -139,7 +139,7 @@ def analyze_data(data):
         data (pandas.DataFrame): Обработанный датасет.
     """
     # Выбор числовых столбцов
-    numeric_data = data.select_dtypes(include='number')
+    numeric_data = pd.concat([data.select_dtypes(include='number'), data[['ZOI_drug', 'ZOI_NP', 'ZOI_drug_NP']]], axis=1)
 
     # Построение тепловой карты корреляции
     graphs.matrix_correlation(numeric_data)
