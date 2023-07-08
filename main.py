@@ -108,6 +108,15 @@ def process_data(data):
     mask = (data['MDR_check'] > 0.9)
     data.loc[mask, 'MDR_check'] = np.nan
 
+    data['ZOI_drug'] = data['ZOI_drug'].astype(float)
+    data['ZOI_NP'] = data['ZOI_NP'].astype(float)
+    data['ZOI_drug_NP'] = data['ZOI_drug_NP'].astype(float)
+
+    mask = (data['ZOI_drug'] > 150)
+    data.loc[mask, 'ZOI_drug'] = np.nan
+
+    mask = (data['ZOI_NP'] > 150)
+    data.loc[mask, 'ZOI_NP'] = np.nan
 
     return data
 
@@ -161,11 +170,12 @@ def analyze_data(data):
         data (pandas.DataFrame): Обработанный датасет.
     """
     # Выбор числовых столбцов
-    numeric_data = pd.concat([data.select_dtypes(include='number'), data[['ZOI_drug', 'ZOI_NP', 'ZOI_drug_NP']]], axis=1)
+    numeric_data = data.select_dtypes(include='number')
 
     # Построение тепловой карты корреляции
-    # graphs.matrix_correlation(numeric_data)
-    graphs.boxplot(numeric_data)
+    graphs.matrix_correlation(numeric_data)
+    list = ['ZOI_drug', 'ZOI_NP', 'ZOI_drug_NP']
+    graphs.boxplot(data[list])
 
 
 def save_data(data, name = 'data_new.csv'):
