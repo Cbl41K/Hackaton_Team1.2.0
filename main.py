@@ -5,6 +5,10 @@ from rdkit.Chem import Descriptors
 import graphs
 import matplotlib.pyplot as plt
 import seaborn as sns
+import sklearn
+from sklearn.ensemble import RandomForestRegressor
+from sklearn import preprocessing
+from sklearn import metrics
 
 def merge_and_load_datasets(name_1, name_2, name_3):
     """
@@ -102,21 +106,18 @@ def process_data(data):
     mask = (data['MolLogP'] < -10)
     data.loc[mask, 'MolLogP'] = np.nan
 
-    mask = (data['biosafety_level'] < 1.5)
-    data.loc[mask, 'biosafety_level'] = np.nan
-
-    mask = (data['MDR_check'] > 0.9)
-    data.loc[mask, 'MDR_check'] = np.nan
-
     data['ZOI_drug'] = data['ZOI_drug'].astype(float)
     data['ZOI_NP'] = data['ZOI_NP'].astype(float)
     data['ZOI_drug_NP'] = data['ZOI_drug_NP'].astype(float)
 
-    mask = (data['ZOI_drug'] > 150)
+    mask = (data['ZOI_drug'] > 60)
     data.loc[mask, 'ZOI_drug'] = np.nan
 
-    mask = (data['ZOI_NP'] > 150)
+    mask = (data['ZOI_NP'] > 60)
     data.loc[mask, 'ZOI_NP'] = np.nan
+
+    mask = (data['ZOI_drug_NP'] > 60)
+    data.loc[mask, 'ZOI_drug_NP'] = np.nan
 
     return data
 
@@ -174,13 +175,12 @@ def analyze_data(data):
 
     # Построение тепловой карты корреляции
     graphs.matrix_correlation(numeric_data)
-    list = ['ZOI_drug', 'ZOI_NP', 'ZOI_drug_NP']
-    graphs.boxplot(data[list])
+    graphs.boxplot(numeric_data)
 
 
 def save_data(data, name = 'data_new.csv'):
     """
-    Сохраняет обработанные данные в CSV-файл и выводит информацию о датасете.
+    Сохраняет обработанные данные в CSV-файл.
 
     Args:
         data (pandas.DataFrame): Обработанный датасет.
@@ -189,17 +189,20 @@ def save_data(data, name = 'data_new.csv'):
     # Сохранение обработанных данных в CSV-файле
     data.to_csv(name, index=False)
 
-    # Вывод информации о датасете
-    print(data.info())
-
-    # Вывод процента пропущенных значений в датасете
-    print(data.isnull().mean() * 100)
 
 def data_for_model(data):
     # Удаление ненужных столбцов
     columns = ['Drug_dose', 'NP_concentration', 'NumHAcceptors', 'NumHDonors',
-               'TPSA', 'cal_pka_basic', 'cal_number_of_rings']
+               'TPSA', 'cal_pka_basic', 'cal_number_of_rings', 'Bacteria', 'NP_Synthesis',
+               'drug', 'Drug_class_drug_bank', 'shape', 'method', 'isolated_from',
+               'Tax_id', 'chemID', 'smiles']
     data = data.drop(columns, axis=1)
+    x = data.values
+    cols = data.columns
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(x)
+    data = pd.DataFrame(x_scaled, columns=cols)
+
     return data
 
 def main():
@@ -223,13 +226,15 @@ def main():
     # Загрузка новых данных
     data = load_and_process_drugbank('drugbank.csv', data)
 
-    # Сохранение данных и вывод информации о датасете
+    # Сохранение данных
     save_data(data, 'merged_data.csv')
-
-    data = data_for_model(data)
 
     # Анализ данных и построение графиков
     analyze_data(data)
+
+    # Очистка базы для модели
+    data = data_for_model(data)
+
 
 
 if __name__ == '__main__':

@@ -45,6 +45,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/model.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/model_db.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/test.csv">
           <value>
             <Attribute>

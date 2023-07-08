@@ -5,3 +5,4 @@ Bio
 seaborn
 matplotlib
 graphs
+sklearn
