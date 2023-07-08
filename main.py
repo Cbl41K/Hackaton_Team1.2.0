@@ -75,7 +75,7 @@ def process_data(data):
     # Исключение строк, где значение в столбце 'NP_concentration' содержит символ '/'
     data = data[~data['NP_concentration'].str.contains('/', na=False)]
 
-    # Привоение Nan для Drug_dose, если drug равно Nan
+    # Приcвоение Nan для Drug_dose, если drug равно Nan
     data.loc[data['drug'].isna(), 'Drug_dose'] = np.nan
 
     columns = ['Unnamed: 0.1', 'Unnamed: 0_x', 'Unnamed: 0_y',
@@ -164,6 +164,12 @@ def save_data(data, name = 'data_new.csv'):
     # Вывод процента пропущенных значений в датасете
     print(data.isnull().mean() * 100)
 
+def data_for_model(data):
+    # Удаление ненужных столбцов
+    columns = ['Drug_dose', 'NP_concentration', 'NumHAcceptors', 'NumHDonors',
+               'TPSA', 'cal_pka_basic', 'cal_number_of_rings']
+    data = data.drop(columns, axis=1)
+    return data
 
 def main():
     # Объединение датасетов и загрузка данных
@@ -186,11 +192,14 @@ def main():
     # Загрузка новых данных
     data = load_and_process_drugbank('drugbank.csv', data)
 
+    # Сохранение данных и вывод информации о датасете
+    save_data(data, 'merged_data.csv')
+
+    data = data_for_model(data)
+
     # Анализ данных и построение графиков
     analyze_data(data)
 
-    # Сохранение данных и вывод информации о датасете
-    save_data(data, 'merged_data.csv')
 
 if __name__ == '__main__':
     main()
