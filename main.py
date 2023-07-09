@@ -313,7 +313,7 @@ def main():
     data = process_data(data)
 
     data = load_and_process_drugbank('drugbank.csv', data)
-
+    merged = data
     save_data(data, 'merged_data.csv')
 
     #analyze_data(data)
@@ -328,7 +328,9 @@ def main():
     model = load_model()
 
     # Пример использования модели
-    print('Предсказания для данных:', predict_ZOI_drug_NP(data, model))
+    print('Предсказания для данных:', predict_ZOI_drug_NP(merged, model))
+    merged['ZOI_drug_NP'] = predict_ZOI_drug_NP(merged, model)
+    save_data(merged, 'merged_data_2.0.csv')
 
 
 if __name__ == '__main__':
