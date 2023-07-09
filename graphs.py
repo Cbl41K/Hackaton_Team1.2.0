@@ -1,15 +1,10 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def matrix_graphs(data):
-    sns.pairplot(data, size=5)
-    plt.show()
-
 
 def matrix_of_dependency_graphs(data, cols_to_analyse):
     """
     Строит матрицу графиков зависимости между выбранными столбцами.
-
     Args:
         data (pandas.DataFrame): Данные для анализа.
         cols_to_analyse (list): Список столбцов для анализа.
@@ -21,7 +16,6 @@ def matrix_of_dependency_graphs(data, cols_to_analyse):
 def matrix_correlation(cols_to_analyse):
     """
     Строит матрицу корреляции между выбранными столбцами и выводит тепловую карту.
-
     Args:
         cols_to_analyse (pandas.DataFrame): Столбцы для анализа.
     """
@@ -32,7 +26,6 @@ def matrix_correlation(cols_to_analyse):
 def histogram(data, column, bins=None):
     """
     Строит гистограмму значений выбранного столбца.
-
     Args:
         data (pandas.DataFrame): Данные для анализа.
         column (str): Название столбца.
@@ -44,5 +37,10 @@ def histogram(data, column, bins=None):
 
 
 def boxplot(data):
+    """
+    Строит боксплот для проверки выбросов.
+    Args:
+        data (pandas.DataFrame): Данные для анализа.
+    """
     sns.boxplot(data=data, orient="h")
     plt.show()
