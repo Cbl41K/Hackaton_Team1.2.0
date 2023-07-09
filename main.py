@@ -197,9 +197,10 @@ def data_for_model(data):
     data = data.drop(columns, axis=1)
     x = data.values
     cols = data.columns
-    min_max_scaler = preprocessing.MinMaxScaler()
-    x_scaled = min_max_scaler.fit_transform(x)
-    data = pd.DataFrame(x_scaled, columns=cols)
+    # Нормализацию приишлось убрать, тк не получается денормализовать значения. Результаты модели от этого не изменились
+    # min_max_scaler = preprocessing.MinMaxScaler()
+    # x_scaled = min_max_scaler.fit_transform(x)
+    # data = pd.DataFrame(x_scaled, columns=cols)
 
     return data
 
@@ -293,6 +294,8 @@ def predict_ZOI_drug_NP(data, model):
                      'cal_logs', 'cal_pka_acidic', 'cal_rule_of_five']]
     predicted_values = model.predict(features)
 
+
+
     return predicted_values
 
 
@@ -315,6 +318,7 @@ def main():
     data = load_and_process_drugbank('drugbank.csv', data)
 
     save_data(data, 'merged_data.csv')
+    merged = data
 
     #analyze_data(data)
 
@@ -328,7 +332,9 @@ def main():
     model = load_model()
 
     # Пример использования модели
-    print('Предсказания для данных:', predict_ZOI_drug_NP(data, model))
+    print('Предсказания для данных:', predict_ZOI_drug_NP(merged, model))
+    merged['ZOI_drug_NP'] = predict_ZOI_drug_NP(merged, model)
+    save_data(merged, 'merged_data_2.0.csv')
 
 
 if __name__ == '__main__':
