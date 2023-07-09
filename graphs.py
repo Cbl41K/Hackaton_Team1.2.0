@@ -1,3 +1,4 @@
+#Это либа для упрощения работы с графиками
 import matplotlib.pyplot as plt
 import seaborn as sns
 
