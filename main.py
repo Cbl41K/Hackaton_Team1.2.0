@@ -319,6 +319,7 @@ def main():
 
     save_data(data, 'merged_data.csv')
     merged = data
+
     #analyze_data(data)
 
     data = data_for_model(data)
